@@ -10,9 +10,15 @@ Class {
 	#package : 'Containers-BPlusTree'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance creation' }
 CTBPlusTreePromotion class >> key: aKey left: leftNode right: rightNode [
     ^ self new setKey: aKey left: leftNode right: rightNode
+]
+
+{ #category : 'dispatching' }
+CTBPlusTreePromotion >> processPromotionIn: anInternalNode order: maxOrder [
+    "Tell the internal node to absorb the split"
+    ^ anInternalNode absorbSplitKey: promotedKey rightChild: rightNode order: maxOrder
 ]
 
 { #category : 'dispatching' }

@@ -9,6 +9,11 @@ Class {
 	#package : 'Containers-BPlusTree'
 }
 
+{ #category : 'instance creation' }
+CTBPlusTreeLeafNode class >> keys: aKeyCollection values: aValueCollection nextLeaf: aNode [
+    ^ self new setKeys: aKeyCollection values: aValueCollection nextLeaf: aNode
+]
+
 { #category : 'initialization' }
 CTBPlusTreeLeafNode >> initialize [
     super initialize.

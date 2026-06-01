@@ -8,6 +8,29 @@ Class {
 	#package : 'Containers-BPlusTree'
 }
 
+{ #category : 'instance creation' }
+CTBPlusTreeInternalNode class >> keys: aKeyCollection children: aChildCollection [
+    ^ self new setKeys: aKeyCollection children: aChildCollection
+]
+
+{ #category : 'private' }
+CTBPlusTreeInternalNode >> absorbSplitKey: aKey rightChild: rightNode order: maxOrder [
+    | insertIndex |
+    insertIndex := keys findFirst: [ :k | aKey < k ].
+        
+    insertIndex = 0 ifTrue: [
+        keys addLast: aKey.
+        children addLast: rightNode.
+    ] ifFalse: [
+        keys add: aKey beforeIndex: insertIndex.
+        children add: rightNode beforeIndex: insertIndex + 1.
+    ].
+    
+    ^ keys size < maxOrder 
+        ifTrue: [ self ]
+        ifFalse: [ self splitInternal ]
+]
+
 { #category : 'private' }
 CTBPlusTreeInternalNode >> addFirstChild: aNode [
     children add: aNode.
@@ -45,6 +68,16 @@ CTBPlusTreeInternalNode >> childForKey: aKey [
     index := keys findFirst: [ :k | aKey < k ].
     index = 0 ifTrue: [ ^ children last ].
     ^ children at: index.
+]
+
+{ #category : 'accessing' }
+CTBPlusTreeInternalNode >> children [
+    ^ children
+]
+
+{ #category : 'accessing' }
+CTBPlusTreeInternalNode >> children: anOrderedCollection [
+    children := anOrderedCollection
 ]
 
 { #category : 'removing' }
@@ -90,6 +123,15 @@ CTBPlusTreeInternalNode >> handleUnderflowAt: childIndex order: maxOrder [
 CTBPlusTreeInternalNode >> initialize [
     super initialize.
     children := OrderedCollection new.
+]
+
+{ #category : 'adding' }
+CTBPlusTreeInternalNode >> insertKey: aKey value: aValue order: maxOrder [
+    | targetChild result |
+    targetChild := self childForKey: aKey.
+    result := targetChild insertKey: aKey value: aValue order: maxOrder.
+    
+    ^ result processPromotionIn: self order: maxOrder.
 ]
 
 { #category : 'private' }
@@ -138,4 +180,30 @@ CTBPlusTreeInternalNode >> searchKey: aKey ifAbsent: errorBlock [
 CTBPlusTreeInternalNode >> setKeys: aKeyCollection children: aChildCollection [
     keys := aKeyCollection.
     children := aChildCollection.
+]
+
+{ #category : 'private' }
+CTBPlusTreeInternalNode >> splitInternal [
+    | middleIndex middleKey newSibling newKeys newChildren |
+    middleIndex := (keys size // 2) + 1.
+    middleKey := keys at: middleIndex.
+    
+    newKeys := OrderedCollection new.
+    newChildren := OrderedCollection new.
+    
+    middleIndex + 1 to: keys size do: [ :i |
+        newKeys addLast: (keys at: i).
+    ].
+    middleIndex + 1 to: children size do: [ :i |
+        newChildren addLast: (children at: i).
+    ].
+    
+    (keys size - middleIndex + 1) timesRepeat: [ keys removeLast ].
+    (children size - middleIndex) timesRepeat: [ children removeLast ].
+    
+    newSibling := self class new.
+    newSibling keys: newKeys.
+    newSibling children: newChildren.
+    
+    ^ CTBPlusTreePromotion key: middleKey left: self right: newSibling
 ]

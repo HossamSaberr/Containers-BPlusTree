@@ -61,6 +61,11 @@ CTBPlusTree >> order: anInteger [
     order := anInteger max: 3.
 ]
 
+{ #category : 'private' }
+CTBPlusTree >> root: aNode [
+    root := aNode
+]
+
 { #category : 'accessing' }
 CTBPlusTree >> size [
     ^ size
