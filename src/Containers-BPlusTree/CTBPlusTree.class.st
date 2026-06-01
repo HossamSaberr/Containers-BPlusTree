@@ -61,6 +61,24 @@ CTBPlusTree >> order: anInteger [
     order := anInteger max: 3.
 ]
 
+{ #category : 'removing' }
+CTBPlusTree >> removeKey: aKey [
+    ^ self removeKey: aKey ifAbsent: [ self error: 'Key not found for deletion' ]
+]
+
+{ #category : 'removing' }
+CTBPlusTree >> removeKey: aKey ifAbsent: errorBlock [
+    | result |
+    result := root removeKey: aKey ifAbsent: errorBlock order: order.
+    
+    "If the root was an internal node and it merged down to a single child, collapse the height"
+    (root class = CTBPlusTreeInternalNode and: [ root keys isEmpty ])
+        ifTrue: [ root := root children first ].
+        
+    size := size - 1.
+    ^ aKey
+]
+
 { #category : 'private' }
 CTBPlusTree >> root: aNode [
     root := aNode

@@ -14,6 +14,32 @@ CTBPlusTreeLeafNode class >> keys: aKeyCollection values: aValueCollection nextL
     ^ self new setKeys: aKeyCollection values: aValueCollection nextLeaf: aNode
 ]
 
+{ #category : 'private' }
+CTBPlusTreeLeafNode >> borrowFromLeftSibling: leftSibling parent: parentNode keyIndex: parentKeyIndex [
+    | borrowedKey borrowedValue |
+    borrowedKey := leftSibling keys removeLast.
+    borrowedValue := leftSibling values removeLast.
+    
+    keys addFirst: borrowedKey.
+    values addFirst: borrowedValue.
+    
+    "Update the parent routing key to reflect the new split point"
+    parentNode keys at: parentKeyIndex put: keys first.
+]
+
+{ #category : 'private' }
+CTBPlusTreeLeafNode >> borrowFromRightSibling: rightSibling parent: parentNode keyIndex: parentKeyIndex [
+    | borrowedKey borrowedValue |
+    borrowedKey := rightSibling keys removeFirst.
+    borrowedValue := rightSibling values removeFirst.
+    
+    keys addLast: borrowedKey.
+    values addLast: borrowedValue.
+    
+    "Update the parent routing key"
+    parentNode keys at: parentKeyIndex put: rightSibling keys first.
+]
+
 { #category : 'initialization' }
 CTBPlusTreeLeafNode >> initialize [
     super initialize.
@@ -43,6 +69,20 @@ CTBPlusTreeLeafNode >> insertKey: aKey value: aValue order: maxOrder [
     ^ keys size < maxOrder 
         ifTrue: [ self ]
         ifFalse: [ self splitLeaf ]
+]
+
+{ #category : 'private' }
+CTBPlusTreeLeafNode >> mergeWithRightSibling: rightSibling parent: parentNode keyIndex: parentKeyIndex [
+    "Pull all data from the right sibling into me"
+    keys addAll: rightSibling keys.
+    values addAll: rightSibling values.
+    
+    "Heal the sequential linked list"
+    nextLeaf := rightSibling nextLeaf.
+    
+    "Delete the right sibling routing key and pointer from the parent"
+    parentNode keys removeAt: parentKeyIndex.
+    parentNode children removeAt: parentKeyIndex + 1.
 ]
 
 { #category : 'accessing' }
