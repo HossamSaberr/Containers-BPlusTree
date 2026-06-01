@@ -21,6 +21,21 @@ CTBPlusTree >> at: aKey ifAbsent: errorBlock [
     ^ root searchKey: aKey ifAbsent: errorBlock
 ]
 
+{ #category : 'adding' }
+CTBPlusTree >> at: aKey put: aValue [
+    | result isNew |
+    isNew := false.
+    self at: aKey ifAbsent: [ isNew := true ].
+    
+    result := root insertKey: aKey value: aValue order: order.
+    
+    "Double dispatch handles the case where the root itself splits"
+    result processRootUpdateFor: self.
+    
+    isNew ifTrue: [ size := size + 1 ].
+    ^ aValue
+]
+
 { #category : 'initialization' }
 CTBPlusTree >> clear [
     "Starting with a LeafNode avoids explicit nil checks on the first insertion"

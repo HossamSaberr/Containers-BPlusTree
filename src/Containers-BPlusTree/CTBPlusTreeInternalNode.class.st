@@ -9,6 +9,11 @@ Class {
 }
 
 { #category : 'private' }
+CTBPlusTreeInternalNode >> addFirstChild: aNode [
+    children add: aNode.
+]
+
+{ #category : 'private' }
 CTBPlusTreeInternalNode >> childForKey: aKey [
     | index |
     index := keys findFirst: [ :k | aKey < k ].
@@ -20,6 +25,12 @@ CTBPlusTreeInternalNode >> childForKey: aKey [
 CTBPlusTreeInternalNode >> initialize [
     super initialize.
     children := OrderedCollection new.
+]
+
+{ #category : 'private' }
+CTBPlusTreeInternalNode >> insertPromotedKey: aKey child: aNode [
+    keys add: aKey.
+    children add: aNode.
 ]
 
 { #category : 'accessing' }
