@@ -50,6 +50,24 @@ CTBPlusTreeLeafNode >> nextLeaf: aNode [
     nextLeaf := aNode
 ]
 
+{ #category : 'removing' }
+CTBPlusTreeLeafNode >> removeKey: aKey ifAbsent: errorBlock order: maxOrder [
+    | index minSize |
+    index := keys indexOf: aKey.
+    index = 0 ifTrue: [ ^ errorBlock value ].
+    
+    "remove the key and value"
+    keys removeAt: index.
+    values removeAt: index.
+    
+    "B+ Trees require nodes to be at least half full (except the root)"
+    minSize := maxOrder // 2.
+    
+    ^ keys size < minSize 
+        ifTrue: [ CTBPlusTreeUnderflow node: self ]
+        ifFalse: [ self ]
+]
+
 { #category : 'accessing' }
 CTBPlusTreeLeafNode >> searchKey: aKey ifAbsent: errorBlock [
     | index |

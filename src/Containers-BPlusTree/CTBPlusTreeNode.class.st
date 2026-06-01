@@ -17,3 +17,9 @@ CTBPlusTreeNode >> keys [
 CTBPlusTreeNode >> keys: anOrderedCollection [
     keys := anOrderedCollection
 ]
+
+{ #category : 'dispatching' }
+CTBPlusTreeNode >> processUnderflowIn: anInternalNode index: childIndex order: maxOrder [
+    "I am not underflowing, Tell the parent everything is fine"
+    ^ anInternalNode
+]
