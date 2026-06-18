@@ -19,8 +19,8 @@ To install `Containers-BPlusTree`, open the Playground (`Ctrl + O + W`) in your 
 
 ```smalltalk
 Metacello new
-    baseline: 'BPlusTree';
-    repository: 'github://HossamSaberr/B-Tree/src';
+    baseline: 'ContainersBPlusTree';
+    repository: 'github://pharo-containers/Containers-BPlusTree/src';
     load.
 ```
 ## Why use Containers-BPlusTree?
@@ -60,3 +60,9 @@ tree at: 999 ifAbsent: [ 'Guest_Profile' ].
 "Dynamically remove a key. Sibling nodes automatically borrow or merge to balance memory"
 tree removeKey: 20.
 ```
+
+---
+
+## Contributing
+
+This library is part of the [Pharo Containers](https://github.com/pharo-containers) project. Contributions are welcome, whether implementing additional functional combinators, improving test coverage, or enhancing documentation. Please open an issue or pull request on GitHub.
