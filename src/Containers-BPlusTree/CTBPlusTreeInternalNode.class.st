@@ -80,6 +80,16 @@ CTBPlusTreeInternalNode >> children: anOrderedCollection [
     children := anOrderedCollection
 ]
 
+{ #category : 'accessing' }
+CTBPlusTreeInternalNode >> findLeafContaining: aKey [
+    "Find the child for this key, and ask it to continue the search."
+    | nextChild |
+    
+    nextChild := self childForKey: aKey. 
+    
+    ^ nextChild findLeafContaining: aKey
+]
+
 { #category : 'removing' }
 CTBPlusTreeInternalNode >> handleUnderflowAt: childIndex order: maxOrder [
     | targetChild minSize leftSibling rightSibling |

@@ -45,6 +45,12 @@ CTBPlusTree >> clear [
 ]
 
 { #category : 'accessing' }
+CTBPlusTree >> findLeafContaining: aKey [
+    "Start the search at the root"
+    ^ root findLeafContaining: aKey
+]
+
+{ #category : 'accessing' }
 CTBPlusTree >> firstLeaf [
     ^ firstLeaf
 ]

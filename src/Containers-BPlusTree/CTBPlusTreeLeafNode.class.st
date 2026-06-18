@@ -40,6 +40,12 @@ CTBPlusTreeLeafNode >> borrowFromRightSibling: rightSibling parent: parentNode k
     parentNode keys at: parentKeyIndex put: rightSibling keys first.
 ]
 
+{ #category : 'accessing' }
+CTBPlusTreeLeafNode >> findLeafContaining: aKey [
+    "I am a leaf, so I am the destination. Return myself."
+    ^ self
+]
+
 { #category : 'initialization' }
 CTBPlusTreeLeafNode >> initialize [
     super initialize.
@@ -69,6 +75,14 @@ CTBPlusTreeLeafNode >> insertKey: aKey value: aValue order: maxOrder [
     ^ keys size < maxOrder 
         ifTrue: [ self ]
         ifFalse: [ self splitLeaf ]
+]
+
+{ #category : 'accessing' }
+CTBPlusTreeLeafNode >> keysDo: aBlock [
+    "Iterate over keys without creating a temporary array copy"
+    keys do: [ :each | 
+        each ifNotNil: [ aBlock value: each ] 
+    ]
 ]
 
 { #category : 'private' }
